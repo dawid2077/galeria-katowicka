@@ -7,20 +7,8 @@ import uuid
 from typing import Optional
 from uuid_extension import uuid7
 from pydantic import BaseModel, NonNegativeInt,Field
-from pydantic_settings import BaseSettings, SettingsConfigDict
 
-class Settings(BaseSettings):
-    # These will automatically read from environment variables 
-    # whether they come from a local .env file OR from Kubernetes!
-    DATABASE_URL: str
-    OPENAI_API_KEY: str
-    VENUE_NAME: str = "Galeria Katowicka"
 
-    # Updated to Pydantic V2 SettingsConfigDict syntax
-    model_config = SettingsConfigDict(
-        env_file="../configs/.env", 
-        env_file_encoding="utf-8"
-    )
 
 # Instantiate the settings class so it loads the values from environment/.env
 class Book(BaseModel):
