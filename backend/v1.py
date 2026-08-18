@@ -44,22 +44,30 @@ app=FastAPI()
 
 db: dict[uuid.UUID, Book] = {}
 @app.get("/book")
-def get_all_books():
+def get_all_books() -> dict:
     return db
-@app.get("/book/{book_uuid}")
-def get_book(book_uuid : uuid.UUID):
+@app.get(
+    "/book/{book_uuid}",
+    responses={
+        404: {
+            "model": Message,
+            "description": "Book not found"
+        }
+    }
+    )
+def get_book(book_uuid : uuid.UUID) -> dict:
     if book_uuid not in db:
         raise HTTPException(status_code=404,detail="Book not found")
     return db[book_uuid]
 @app.post("/book")
-def post_book(book : Book):
+def post_book(book : Book) -> dict:
     db[book.id]=book
     print("added sucessfully")
     return db[book.id]
 @app.patch("/book/{book_uuid}")
-def patch_book(book_uuid : uuid.UUID):
+def patch_book(book_uuid : uuid.UUID) -> None:
     pass
-    #here i would update it 
+    #here i would update it  but im to lazy to write it 
 @app.delete(
     "/book/{book_uuid}",
     responses={
@@ -69,7 +77,7 @@ def patch_book(book_uuid : uuid.UUID):
         }
     }
 )
-def delete_book(book_uuid: uuid.UUID):
+def delete_book(book_uuid: uuid.UUID) -> str:
     if book_uuid in db:
         del db[book_uuid]
     else:
