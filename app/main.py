@@ -6,48 +6,19 @@ import uuid
 
 from typing import Optional
 from uuid_extension import uuid7
-from pydantic import BaseModel, NonNegativeInt,Field
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field
+
+
+#from my files
+from config import settings
+from schemas import Book,BookNotFound,Message,BookUpdate
 
 #this lacks rate limiting and can be targeted by ddos by sending big post requests (auth fixed it tho to some extent)
 
 
-class Settings(BaseSettings):
-    # These will automatically read from environment variables 
-    # whether they come from a local .env file OR from Kubernetes!
-    DATABASE_URL: str
-    OPENROUTER_API_KEY: str
-    VENUE_NAME: str = "Galeria Katowicka"
-
-    # Updated to Pydantic V2 SettingsConfigDict syntax
-    model_config = SettingsConfigDict(
-        env_file="../configs/.env", 
-        env_file_encoding="utf-8"
-    )
-
-# Instantiate the settings class so it loads the values from environment/.env
-class Book(BaseModel):
-    id: uuid.UUID = Field(default_factory=uuid7)
-    name:str
-    author:str
-    release_year:int
-    quantity:NonNegativeInt
-class BookUpdate(BaseModel):
-    name: Optional[str]= None
-    author: Optional[str]= None
-    release_year: Optional[int]= None
-    quantity: Optional[NonNegativeInt]= None
-
-class Message(BaseModel):
-    detail: str
-settings =Settings()
-
 app=FastAPI()
 
-class BookNotFound(Exception):
 
-    def __init__(self, book_id: str):
-        self.book_id=book_id
 
 class Database:
 

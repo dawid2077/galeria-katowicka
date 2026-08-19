@@ -12,4 +12,5 @@ dependencies = [
     "pydantic-settings",
     "psycopg[binary]",
     "uuid-extension",
+    'sqlalchemy',
 ]
