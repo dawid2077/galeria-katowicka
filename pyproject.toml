@@ -13,4 +13,5 @@ dependencies = [
     "psycopg[binary]",
     "uuid-extension",
     'sqlalchemy',
+    'structlog',
 ]

@@ -5,10 +5,14 @@ import uuid
 from uuid_extension import uuid7
 class Book(BaseModel):
     id: uuid.UUID = Field(default_factory=uuid7)
-    name:str
-    author:str
-    release_year:int
-    quantity:NonNegativeInt
+    name: str
+    author_id: uuid.UUID 
+    release_year: int
+    quantity: NonNegativeInt
+class Author(BaseModel):
+    id : uuid.UUId = Field(default_factory=uuid7)
+    name: str
+    surname: str
 class BookUpdate(BaseModel):
     name: Optional[str]= None
     author: Optional[str]= None
