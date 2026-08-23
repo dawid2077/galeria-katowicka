@@ -1,5 +1,6 @@
 #crud.py
-from sqlalchemy.orm import Session,select,
+from sqlalchemy.orm import Session,select
+from sqlalchemy.ext.asyncio import AsyncSession
 import uuid
 from schemas import Book,Author
 from models import Author_table,Book_table
@@ -9,32 +10,32 @@ logger = structlog.get_logger()
 class CRUD:
     #C
     @staticmethod
-    def post_book(db : Session,new_book : Book,book_author : Author) -> None:
-        author_model =db.get(Author_table, book_author.id)
+    async def post_book(db : AsyncSession,new_book : Book,book_author : Author) -> None:
+        author =await db.get(Author_table, book_author.id)
         if author is None:
 
             db.add(book_author)
-            db.flush()
+            await db.flush()
             author=book_author
 
         new_book.author_id=author.id
         db.add(new_book)
-        db.commit()
+        await db.commit()
         return None
     #R
     @staticmethod
-    def get_by_id(db: Session,book_id : uuid.UUID) -> Book | None:
-        book= db.get(Book_table, book_id)
+    async def get_by_id(db: AsyncSession,book_id : uuid.UUID) -> Book | None:
+        book= await db.get(Book_table, book_id)
         return book
     @staticmethod
-    def get_author_by_id(db: Session,author_id: uuid.UUID) -> Author | None:
-        author= db.get(Author_table, author_id)
+    async def get_author_by_id(db: AsyncSession,author_id: uuid.UUID) -> Author | None:
+        author= await db.get(Author_table, author_id)
         return author
     @staticmethod
-    def get_all_books(db: Session) -> list[Book_table]:
+    async def get_all_books(db: AsyncSession) -> list[Book_table]:
         stmt = select(Book_table)
-        books=db.scalars(stmt).all()
-        #we check if len(0) to see if its empty
+        result = await db.scalars(stmt)
+        books=result.all()
         return books
     #E
     @staticmethod

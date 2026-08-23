@@ -1,15 +1,23 @@
 #local files
-from main import app,Database,get_db_service
-from schemas import Book,BookNotFound,Message
+from main import app
 
+from database import AsyncSessionLocal,get_db,AsyncSession
+from schemas import Book,BookNotFound,Message
+from crud import get_all_books
 from fastapi import FastAPI,HTTPException,status,Depends
 
 
 import uuid
+
+
 @app.get("/book")
-def get_all_books(db: Database = Depends(get_db_service)) -> dict:
+def get_all_books(db: AsyncSession = Depends(get_db)) -> dict:
+
     return db.fetch_all_books()
 
+
+@app.get("/book")
+def get_all(db Async: )
 
 @app.get(
     "/book/{book_uuid}",
