@@ -1,3 +1,4 @@
+#schemas.py
 from pydantic import BaseModel,NonNegativeInt,Field
 from pydantic_settings import Setting
 from typing import Optional
@@ -10,7 +11,7 @@ class Book(BaseModel):
     release_year: int
     quantity: NonNegativeInt
 class Author(BaseModel):
-    id : uuid.UUId = Field(default_factory=uuid7)
+    id : uuid.UUID = Field(default_factory=uuid7)
     name: str
     surname: str
 class BookUpdate(BaseModel):
@@ -21,7 +22,6 @@ class BookUpdate(BaseModel):
 
 class Message(BaseModel):
     detail: str
-
 
 class BookNotFound(Exception):
 
