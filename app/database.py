@@ -1,17 +1,19 @@
-# simple 1 connection to postgres
+#database.py
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
 from config import settings
-
+#! make sure to not use this function in prod
 def test(url):
     return url
 
-print(test(settings.DATABASE_URL))
+#print(test(settings.DATABASE_URL))
 
-#^ here i define the parameters for the connection pool
+#* this so we have a connection pool and session we can pass to endpoints
 engine = create_async_engine(
     settings.DATABASE_URL,
+    #! set to True for raw sql info
+    #echo=True,
     pool_size=2,
     max_overflow=3,
     pool_timeout=10,
@@ -24,5 +26,5 @@ AsyncSessionLocal =async_sessionmaker(
     expire_on_commit=False
 )
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    async with AsyncSessionLocal as session:
+    async with AsyncSessionLocal() as session:
         yield session

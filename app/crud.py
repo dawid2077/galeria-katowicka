@@ -1,5 +1,6 @@
 #crud.py
-from sqlalchemy.orm import Session,select
+from collections.abc import Sequence
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 import uuid
 from schemas import Book,Author
@@ -10,46 +11,48 @@ logger = structlog.get_logger()
 class CRUD:
     #C
     @staticmethod
-    async def post_book(db : AsyncSession,new_book : Book,book_author : Author) -> None:
+    async def post_book(db : AsyncSession,new_book : Book,book_author : Author) -> Book_table:
         author =await db.get(Author_table, book_author.id)
         if author is None:
-
-            db.add(book_author)
+            author = Author_table(**book_author.model_dump())
+            db.add(author)
             await db.flush()
-            author=book_author
 
         new_book.author_id=author.id
-        db.add(new_book)
+
+        db_book = Book_table(**new_book.model_dump())
+        db.add(db_book)
         await db.commit()
-        return None
+        await db.refresh(db_book)
+        return db_book
     #R
     @staticmethod
-    async def get_by_id(db: AsyncSession,book_id : uuid.UUID) -> Book | None:
+    async def get_by_id(db: AsyncSession,book_id : uuid.UUID) -> Book_table | None:
         book= await db.get(Book_table, book_id)
         return book
     @staticmethod
-    async def get_author_by_id(db: AsyncSession,author_id: uuid.UUID) -> Author | None:
+    async def get_author_by_id(db: AsyncSession,author_id: uuid.UUID) -> Author_table | None:
         author= await db.get(Author_table, author_id)
         return author
     @staticmethod
-    async def get_all_books(db: AsyncSession) -> list[Book_table]:
+    async def get_all_books(db: AsyncSession) -> Sequence[Book_table]:
         stmt = select(Book_table)
         result = await db.scalars(stmt)
         books=result.all()
         return books
     #E
     @staticmethod
-    def patch_book(db : Session,book_id : uuid.UUID) -> False:
-        #TODO here i would iplement it by im too lazy for it 
+    async def patch_book(db : AsyncSession,book_id : uuid.UUID) -> bool:
+        # TODO here i would iplement it by im too lazy for it 
         return False
     #D
     @staticmethod
-    def delete_book(db: Session,book_id : uuid.UUID)-> bool:
-        book= db.get(Book_table, book_id)
+    async def delete_book(db: AsyncSession,book_id : uuid.UUID)-> bool:
+        book= await db.get(Book_table, book_id)
         if not book:
             return False
-        db.delete(book)
-        db.commit()
+        await db.delete(book)
+        await db.commit()
         return True
 
 

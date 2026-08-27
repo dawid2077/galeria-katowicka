@@ -8,7 +8,7 @@ class Settings(BaseSettings):
 
     # Updated to Pydantic V2 SettingsConfigDict syntax
     model_config = SettingsConfigDict(
-        env_file="configs/.env", 
+        env_file="../configs/.env", 
         env_file_encoding="utf-8"
     )
 

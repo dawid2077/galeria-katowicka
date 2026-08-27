@@ -1,6 +1,6 @@
 #skeleton 
 
-
+#TODO will do it when i will use kubernetes
 @app.get("/healthz/liveness", status_code=status.HTTP_200_OK)
 def liveness():
     # Sprawdza tylko, czy sam proces Pythona żyje i odpowiada

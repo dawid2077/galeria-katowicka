@@ -1,6 +1,6 @@
 #schemas.py
 from pydantic import BaseModel,NonNegativeInt,Field
-from pydantic_settings import Setting
+from pydantic_settings import BaseSettings
 from typing import Optional
 import uuid
 from uuid_extension import uuid7
