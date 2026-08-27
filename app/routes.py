@@ -40,4 +40,4 @@ async def route_patch_book(book_uuid : uuid.UUID,db: AsyncSession=Depends(get_db
     }
 )
 async def delete_book(book_uuid: uuid.UUID,db: AsyncSession=Depends(get_db)) -> None:
-    return CRUD.delete_book(db,book_uuid)
+    return await CRUD.delete_book(db,book_uuid)
