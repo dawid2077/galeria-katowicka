@@ -9,11 +9,12 @@ import uuid
 
 
 router = APIRouter()
-@router.get("/book")
+@router.get("/book",response_model=list[Book])
 async def route_get_all_books(db: AsyncSession = Depends(get_db)) -> dict:
     return await CRUD.get_all_books(db)
 @router.get(
     "/book/{book_uuid}",
+    response_model=Book,
     responses={
         404: {
             "model": Message,
@@ -21,9 +22,12 @@ async def route_get_all_books(db: AsyncSession = Depends(get_db)) -> dict:
         }
     }
     )
-async def route_get_book(book_uuid : uuid.UUID,db: AsyncSession = Depends(get_db)):
-    return await CRUD.get_by_id(db,book_uuid)
-@router.post("/book")
+async def route_get_book(book_uuid: uuid.UUID, db: AsyncSession = Depends(get_db)):
+    book = await CRUD.get_by_id(db, book_uuid)
+    if not book:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
+    return book
+@router.post("/book",response_model=Book)
 async def route_post_book(book : Book,author : Author,db: AsyncSession=Depends(get_db)) -> dict:
     return await CRUD.post_book(db,book,author)
 @router.patch("/book/{book_uuid}")

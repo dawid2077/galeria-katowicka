@@ -5,6 +5,7 @@ from typing import Optional
 import uuid
 from uuid_extension import uuid7
 class Book(BaseModel):
+    model_config = {"from_attributes": True}   # Pydantic v2 way of doing orm_mode
     id: uuid.UUID = Field(default_factory=uuid7)
     name: str
     author_id: uuid.UUID 
