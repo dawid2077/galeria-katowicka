@@ -1,25 +1,18 @@
-#local files
-from main import app
-
 from database import AsyncSessionLocal,get_db,AsyncSession
-from schemas import Book,BookNotFound,Message
-from crud import get_all_books
-from fastapi import FastAPI,HTTPException,status,Depends
-
+from schemas import Book,Author,BookNotFound,Message
+from crud import CRUD
+from fastapi import APIRouter,FastAPI,HTTPException,status,Depends
 
 import uuid
 
 
-@app.get("/book")
-def get_all_books(db: AsyncSession = Depends(get_db)) -> dict:
-
-    return db.fetch_all_books()
 
 
-@app.get("/book")
-def get_all(db Async: )
-
-@app.get(
+router = APIRouter()
+@router.get("/book")
+async def route_get_all_books(db: AsyncSession = Depends(get_db)) -> dict:
+    return await CRUD.get_all_books(db)
+@router.get(
     "/book/{book_uuid}",
     responses={
         404: {
@@ -28,23 +21,16 @@ def get_all(db Async: )
         }
     }
     )
-def get_book(book_uuid : uuid.UUID,db : Database=Depends(get_db_service)) -> Book:
-    try:
-        return db.fetch_book(book_uuid)
-    except BookNotFound:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Book not found",
-        )
-@app.post("/book")
-def post_book(book : Book,db: Database=Depends(get_db_service)) -> dict:
-    db.post_book(book)
-    return {"status": "Book added successfully","book_uuid":book.id}
-@app.patch("/book/{book_uuid}")
-def patch_book(book_uuid : uuid.UUID,db: Database=Depends(get_db_service)) -> None:
+async def route_get_book(book_uuid : uuid.UUID,db: AsyncSession = Depends(get_db)):
+    return await CRUD.get_by_id(db,book_uuid)
+@router.post("/book")
+async def route_post_book(book : Book,author : Author,db: AsyncSession=Depends(get_db)) -> dict:
+    return await CRUD.post_book(db,book,author)
+@router.patch("/book/{book_uuid}")
+async def route_patch_book(book_uuid : uuid.UUID,db: AsyncSession=Depends(get_db)) -> None:
     pass
     #here i would update it  but im to lazy to write it 
-@app.delete(
+@router.delete(
     "/book/{book_uuid}",
     responses={
         404: {
@@ -53,11 +39,5 @@ def patch_book(book_uuid : uuid.UUID,db: Database=Depends(get_db_service)) -> No
         }
     }
 )
-def delete_book(book_uuid: uuid.UUID,db: Database=Depends(get_db_service)) -> None:
-    try:
-        return db.delete_book(book_uuid)
-    except BookNotFound:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Book not found"
-        )
+async def delete_book(book_uuid: uuid.UUID,db: AsyncSession=Depends(get_db)) -> None:
+    return CRUD.delete_book(db,book_uuid)
