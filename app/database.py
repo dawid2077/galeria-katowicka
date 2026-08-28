@@ -3,9 +3,7 @@ from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
 from config import settings
-#! make sure to not use this function in prod
-def test(url):
-    return url
+
 
 #print(test(settings.DATABASE_URL))
 
