@@ -1,13 +1,11 @@
 #schemas.py
 from pydantic import BaseModel,NonNegativeInt,Field
 from pydantic_settings import BaseSettings
-from typing import Optional
+from typing import Optional,List,Literal
 import uuid
 from uuid_extension import uuid7
 
 
-class ChatHistory(BaseModel):
-    conversation: List[chatMessage]
 class chatMessage(BaseModel):
     role: Literal["user","assistant","system"]
     content: str =Field(
@@ -18,6 +16,8 @@ class chatMessage(BaseModel):
         "Powiedz mi o Muzeum Śląskie i Strefa Kultury gdzie sie znajduje co tam znajde ",
         ]
     )
+class ChatHistory(BaseModel):
+    conversation: List[chatMessage]
 class Book(BaseModel):
     model_config = {"from_attributes": True}   # Pydantic v2 way of doing orm_mode
     id: uuid.UUID = Field(default_factory=uuid7)

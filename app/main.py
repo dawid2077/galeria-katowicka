@@ -22,7 +22,11 @@ from routes import router as book_router
 async def lifespan(app: FastAPI):
     await init_db()
     yield
-app=FastAPI(lifespan=lifespan)
+app=FastAPI(
+    title="FastAPI Backend",
+    lifespan=lifespan,
+    version="0.1.0"
+    )
 
 
 #* this is so routes.py work

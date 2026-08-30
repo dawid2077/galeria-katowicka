@@ -1,8 +1,10 @@
+#routes.py
 from database import AsyncSessionLocal,get_db,AsyncSession
 from schemas import ChatHistory,Book,Author,BookNotFound,Message
 from crud import CRUD
+from sse_starlette.sse import EventSourceResponse
 from fastapi import APIRouter,FastAPI,HTTPException,status,Depends
-
+from ai import llm_call,full_response
 import uuid
 
 
@@ -12,45 +14,7 @@ router = APIRouter()
 @router.post("/chat/stream",
 summary="Stream Ai Response",
 description="--")
+#* this exist so the response in small chunks which makes it look faster and more responsive
 async def stream_chat(chat_data: ChatHistory) -> EventSourceResponse:
-    #TODO
-   
-
-    
-    return EventSourceResponse(llm_call())
-@router.get("/book",response_model=list[Book])
-async def route_get_all_books(db: AsyncSession = Depends(get_db)) -> dict:
-    return await CRUD.get_all_books(db)
-@router.get(
-    "/book/{book_uuid}",
-    response_model=Book,
-    responses={
-        404: {
-            "model": Message,
-            "description": "Book not found"
-        }
-    }
-    )
-async def route_get_book(book_uuid: uuid.UUID, db: AsyncSession = Depends(get_db)):
-    book = await CRUD.get_by_id(db, book_uuid)
-    if not book:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
-    return book
-@router.post("/book",response_model=Book)
-async def route_post_book(book : Book,author : Author,db: AsyncSession=Depends(get_db)) -> dict:
-    return await CRUD.post_book(db,book,author)
-@router.patch("/book/{book_uuid}")
-async def route_patch_book(book_uuid : uuid.UUID,db: AsyncSession=Depends(get_db)) -> None:
-    pass
-    #here i would update it  but im to lazy to write it 
-@router.delete(
-    "/book/{book_uuid}",
-    responses={
-        404: {
-            "model": Message,
-            "description": "The book with the specified UUID was not found.",
-        }
-    }
-)
-async def delete_book(book_uuid: uuid.UUID,db: AsyncSession=Depends(get_db)) -> None:
-    return await CRUD.delete_book(db,book_uuid)
+    #! in prod change debug_print_response to llm_call
+    return EventSourceResponse(full_response(chat_data))
