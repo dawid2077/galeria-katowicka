@@ -1,0 +1,1 @@
+will have frontend using gsd-core and using spec driven development.

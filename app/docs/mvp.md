@@ -1,0 +1,1 @@
+so in future we will have more than one chat history and actual sessions. for know not. also the main landing page will be in future. also in future postgis and rag 

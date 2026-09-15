@@ -1,0 +1,1 @@
+so my current idea is to have an invidual page wih each bulding and then everyone one of it has invidual mesage history and theme with a building /place it described also in it we have things like chat history etc.  but also i would have one main site wih all venues/places listed so you can look throught them search and click on them
