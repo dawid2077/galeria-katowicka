@@ -3,6 +3,7 @@ user:
 user_id =uuid7
 email
 google_token
+creation_time
 
 
 table session (it automatically joins every session who shares user id)
@@ -20,3 +21,7 @@ place_info=read from configs/place_name (in future rag)
 location_string=a string with the street and kod pocztowy in future will use google maps widget (in future try postgis)
 
 
+checks for ready db schema and record schema
+
+--indexes for important colums all models have schemas for them 
+-- in place it is neccesary add unique /Optional
