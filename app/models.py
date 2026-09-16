@@ -26,8 +26,20 @@ class SessionModel(Base):
     session_id: Mapped[uuid.UUID] = mapped_column(
         Uuid,primary_key=True
     )   
-    chat_history=mapped_column
+    chat_history=Mapped[list[dict[str, Any]]] = mapped_column(
+        JSON,
+        defaults=list
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now()
-    )
+        )
+
+class PlaceModel(Base):
+    __tablename__="sessions"  
+    session_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid,primary_key=True
+    )  
+    name: Mapped[str]=mapped_column(String)
+    info: Mapped[str]=mapped_column(String)
+    location: Mapped[str]=mapped_column(String)
