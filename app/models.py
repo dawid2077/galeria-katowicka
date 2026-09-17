@@ -1,9 +1,9 @@
 #models.py
 #create the tables
 from datetime import datetime
-from typing import List
-from sqlalchemy import String,Uuid,ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase,relationship
+from typing import List, Any
+from sqlalchemy import String, Uuid, ForeignKey, DateTime, func, JSON
+from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
 from pydantic import email
 import uuid
 
@@ -26,8 +26,10 @@ class SessionModel(Base):
     session_id: Mapped[uuid.UUID] = mapped_column(
         Uuid,primary_key=True
     )  
-    session_user_id=# in futuere add it 
-    chat_history=Mapped[list[dict[str, Any]]] = mapped_column(
+    session_user_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("users.user_id"), index=True
+    )
+    chat_history: Mapped[list[dict[str, Any]]] = mapped_column(
         JSON,
         default=list
     )
