@@ -25,19 +25,21 @@ class SessionModel(Base):
     __tablename__="sessions"
     session_id: Mapped[uuid.UUID] = mapped_column(
         Uuid,primary_key=True
-    )   
+    )  
+    session_user_id=# in futuere add it 
     chat_history=Mapped[list[dict[str, Any]]] = mapped_column(
         JSON,
-        defaults=list
+        default=list
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now()
         )
 
+
 class PlaceModel(Base):
-    __tablename__="sessions"  
-    session_id: Mapped[uuid.UUID] = mapped_column(
+    __tablename__="places"  
+    place_id: Mapped[uuid.UUID] = mapped_column(
         Uuid,primary_key=True
     )  
     name: Mapped[str]=mapped_column(String)
