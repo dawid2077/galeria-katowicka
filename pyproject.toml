@@ -17,5 +17,6 @@ dependencies = [
     'structlog',
     'asyncpg',
     'greenlet',
-    'pyjwt'
+    'pyjwt',
+    'clerk-backend-api'
 ]
