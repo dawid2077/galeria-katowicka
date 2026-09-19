@@ -16,7 +16,9 @@ class UserModel(Base):
         Uuid,primary_key=True
     )
     email: Mapped[str]=mapped_column(String)
-    google_id: Mapped[str]=mapped_column(String)
+    clerk_id: Mapped[str] = mapped_column(
+        String, unique=True, index=True, nullable=False
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now()

@@ -1,7 +1,7 @@
 #routes.py
 from database import AsyncSessionLocal,get_db,AsyncSession
 from schemas import ChatHistory,Message
-from auth import get_current_user
+from authClerk import get_current_user
 from crud import CRUD
 from sse_starlette.sse import EventSourceResponse
 from fastapi import APIRouter,FastAPI,HTTPException,status,Depends
@@ -22,6 +22,7 @@ async def stream_chat(chat_data: ChatHistory) -> EventSourceResponse:
 
 @router.get("/test/endpoint")
 async def show_user_id(
-    db : AsyncSession,
+    db : AsyncSession=Depends(get_db),
     user_payload: dict = Depends(get_current_user)
-)
+) -> str
+    print("user_id")
