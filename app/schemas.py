@@ -4,6 +4,9 @@ from pydantic_settings import BaseSettings
 from typing import Optional,List,Literal
 import uuid
 from uuid_extension import uuid7
+from datetime import datetime
+from pydantic import EmailStr,ConfigDict
+
 
 
 class chatMessage(BaseModel):

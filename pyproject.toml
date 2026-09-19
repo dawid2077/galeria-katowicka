@@ -17,5 +17,5 @@ dependencies = [
     'structlog',
     'asyncpg',
     'greenlet',
-    'jwt'
+    'pyjwt'
 ]
