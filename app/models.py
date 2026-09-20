@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import List, Any
 from sqlalchemy import String, Uuid, ForeignKey, DateTime, func, JSON
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
-from pydantic import email
+from pydantic import EmailStr
 import uuid
 
 

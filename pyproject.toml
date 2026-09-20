@@ -19,5 +19,6 @@ dependencies = [
     'greenlet',
     'pyjwt',
     'clerk-backend-api',
-    'psycopg2-binary'
+    'psycopg2-binary',
+    'clerk_backend-api'
 ]

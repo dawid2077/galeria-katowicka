@@ -20,7 +20,9 @@ class ChatMessage(BaseModel):
 
 class ChatHistory(BaseModel):
     conversation: List[ChatMessage]
-
+    
+class Message(BaseModel):
+    detail: str
 
 class UserCreate(BaseModel):
     user_id: uuid.UUID = Field(default_factory=uuid7)

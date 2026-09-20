@@ -1,7 +1,6 @@
 # auth.py
 import os
-from clerk_backend_api import Clerk
-from clerk_backend_api.jwks import AuthenticateRequestOptions
+from clerk_backend_api import Clerk,AuthenticateRequestOptions
 from config import settings
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
