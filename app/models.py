@@ -39,6 +39,7 @@ class SessionModel(Base):
         DateTime(timezone=True),
         server_default=func.now()
         )
+    #in future there will be last interacted column
 
 
 class PlaceModel(Base):
@@ -49,3 +50,4 @@ class PlaceModel(Base):
     name: Mapped[str]=mapped_column(String)
     info: Mapped[str]=mapped_column(String)
     location: Mapped[str]=mapped_column(String)
+    #in future will use postgres location amybe

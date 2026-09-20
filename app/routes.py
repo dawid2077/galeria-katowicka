@@ -2,7 +2,6 @@
 from database import AsyncSessionLocal,get_db,AsyncSession
 from schemas import ChatHistory,Message
 from authClerk import get_current_user_id
-from crud import CRUD
 from sse_starlette.sse import EventSourceResponse
 from fastapi import APIRouter,FastAPI,HTTPException,status,Depends
 from ai import llm_call,full_response

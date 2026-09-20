@@ -1,1 +1,1 @@
-will have frontend using gsd-core and using spec driven development.
+will have frontend in astro using gsd-core and using spec driven development.
