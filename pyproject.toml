@@ -18,5 +18,6 @@ dependencies = [
     'asyncpg',
     'greenlet',
     'pyjwt',
-    'clerk-backend-api'
+    'clerk-backend-api',
+    'psycopg2-binary'
 ]

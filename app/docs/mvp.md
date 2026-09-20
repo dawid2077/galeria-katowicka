@@ -1,2 +1,3 @@
 so in future we will have more than one chat history and actual sessions. for know not. also the main landing page will be in future. also in future postgis and rag alson in future only will i add sigining by a normal password
-also in future updating emails and update method 
+also in future updating emails and update method
+also in future rate limiting and things like that 
