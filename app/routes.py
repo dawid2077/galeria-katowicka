@@ -12,6 +12,8 @@ import uuid
 
 
 router = APIRouter()
+
+@staticmethod
 @router.post("/chat/stream",
 summary="Stream Ai Response",
 description="--")
@@ -20,9 +22,18 @@ async def stream_chat(chat_data: ChatHistory) -> EventSourceResponse:
     #! in prod change debug_print_response to llm_call
     return EventSourceResponse(full_response(chat_data))
 
+@staticmethod
 @router.get("/test/endpoint")
 async def show_user_id(
     db : AsyncSession=Depends(get_db),
     user_payload: dict = Depends(get_current_user)
-) -> str
-    print("user_id")
+    ) -> dict:
+    user_id: str | None = payload.get("sub")
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token is missing user ID ('sub' claim)",
+        )
+    return user_id 
+
+        
