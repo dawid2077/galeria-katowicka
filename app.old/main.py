@@ -17,7 +17,7 @@ from schemas import Book,BookNotFound,Message,BookUpdate
 from init import init_db
 from routes import router as book_router
 #this lacks rate limiting and can be targeted by ddos by sending big post requests (auth fixed it tho to some extent)
-
+"""
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
@@ -28,7 +28,7 @@ app=FastAPI(lifespan=lifespan)
 #* this is so routes.py work
 app.include_router(book_router)
 
-
+"""
 
 
 

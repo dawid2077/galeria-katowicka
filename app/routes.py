@@ -29,11 +29,15 @@ async def show_user_id(
     user_payload: dict = Depends(get_current_user)
     ) -> dict:
     user_id: str | None = payload.get("sub")
+    email: str | None = user_payload.get("email")
     if not user_id:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token is missing user ID ('sub' claim)",
         )
-    return user_id 
+    return {
+        "user_id": user_id,
+        "email": email
+    } 
 
         
