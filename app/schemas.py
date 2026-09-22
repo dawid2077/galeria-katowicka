@@ -5,7 +5,9 @@ from typing import List, Literal, Optional
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from uuid_extension import uuid7
 
-
+class AuthUser(BaseModel):
+    user_id : str
+    email : Emailstr
 class ChatMessage(BaseModel):
     role: Literal["user", "assistant", "system"]
     content: str = Field(

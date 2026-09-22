@@ -5,11 +5,12 @@ from config import settings
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from typing import Dict
+from schemas import AuthUser
 security = HTTPBearer()
 clerk = Clerk(bearer_auth=settings.CLERK_SECRET_KEY)
 
 
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict[str, str]:
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> AuthUser:
     token = credentials.credentials
 
     try:
@@ -40,10 +41,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         # Extract email from custom JWT claim
         email = request_state.payload.get("email")
 
-        return {
-            "user_id": user_id,
-            "email": email
-        }
+        return AuthUser(user_id=user_id,email=email)
 
     except HTTPException:
         raise
