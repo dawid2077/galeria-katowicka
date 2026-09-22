@@ -7,7 +7,7 @@ from uuid_extension import uuid7
 
 class AuthUser(BaseModel):
     clerk_user_id : str
-    email : Emailstr
+    email : EmailStr
 class ChatMessage(BaseModel):
     role: Literal["user", "assistant", "system"]
     content: str = Field(
@@ -26,10 +26,7 @@ class ChatHistory(BaseModel):
 class Message(BaseModel):
     detail: str
 
-class UserCreate(BaseModel):
-    user_id: uuid.UUID = Field(default_factory=uuid7)
-    email: EmailStr
-    clerk_id: str
+
 
 
 class UserResponse(BaseModel):
