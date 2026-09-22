@@ -1,18 +1,16 @@
 #routes.py
 from database import AsyncSessionLocal,get_db,AsyncSession
 from schemas import ChatHistory,Message
-from authClerk import get_current_user_id
 from sse_starlette.sse import EventSourceResponse
 from fastapi import APIRouter,FastAPI,HTTPException,status,Depends
 from ai import llm_call,full_response
 import uuid
-
-
+from authClerk import auth_user
+from userMethods import UserModel
 
 
 router = APIRouter()
 
-@staticmethod
 @router.post("/chat/stream",
 summary="Stream Ai Response",
 description="--")
@@ -21,8 +19,11 @@ async def stream_chat(chat_data: ChatHistory) -> EventSourceResponse:
     #! in prod change debug_print_response to llm_call
     return EventSourceResponse(full_response(chat_data))
 
-@staticmethod
+
+#!add email excation from auth will work on that 
+"""
 @router.get("/test/endpoint")
+
 async def show_user_id(
     db : AsyncSession=Depends(get_db),
     user_payload: dict = Depends(get_current_user_id)
@@ -37,6 +38,18 @@ async def show_user_id(
     return {
         "user_id": user_id,
         "email": email
-    } 
+    }
+"""
+
+@router.get("/test/endpoint")
+async def show_user_id_email(
+    user: UserModel = Depends(auth_user),
+):
+    # 'user' is already a fully authenticated & database-synced UserModel instance
+    return {
+        "user_id": user.user_id,
+        "email": user.email,
+        "clerk_id": user.clerk_id,
+    }
 
         

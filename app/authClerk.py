@@ -59,8 +59,8 @@ def get_current_user(
             detail=f"Invalid or expired token: {e}",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    async def auth_user(
-        db: AsyncSession = Depends(get_db),
-        current_user: AuthUser = Depends(get_current_user),
-    ) -> UserModel:
-        return await UserMethods.get_or_create_user(db,current_user)
+async def auth_user(
+    db: AsyncSession = Depends(get_db),
+    current_user: AuthUser = Depends(get_current_user),
+) -> UserModel:
+    return await UserMethods.get_or_create_user(db,current_user)

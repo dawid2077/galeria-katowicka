@@ -15,7 +15,7 @@ from pydantic import Field
 from config import settings
 # 
 from init import init_db
-from routes import router as book_router
+from routes import router as main_router
 #this lacks rate limiting and can be targeted by ddos by sending big post requests (auth fixed it tho to some extent)
 
 @asynccontextmanager
@@ -30,7 +30,7 @@ app=FastAPI(
 
 
 #* this is so routes.py work
-app.include_router(book_router)
+app.include_router(main_router)
 
 
 

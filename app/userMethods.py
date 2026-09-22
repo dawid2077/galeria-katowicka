@@ -1,5 +1,6 @@
 from models import UserModel
 from database import AsyncSession
+from schemas import AuthUser
 class UserMethods:
     #! first two  function will not be used 
     """
