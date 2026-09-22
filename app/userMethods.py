@@ -1,6 +1,8 @@
 from models import UserModel
 from database import AsyncSession
 from schemas import AuthUser
+from uuid6 import uuid7
+print(uuid7())
 class UserMethods:
     #! first two  function will not be used 
     """

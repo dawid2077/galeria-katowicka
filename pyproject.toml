@@ -20,5 +20,6 @@ dependencies = [
     'pyjwt',
     'clerk-backend-api',
     'psycopg2-binary',
-    'clerk_backend-api'
+    'clerk_backend-api',
+    'uuid6'
 ]

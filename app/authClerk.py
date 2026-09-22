@@ -2,7 +2,7 @@
 import os
 from clerk_backend_api import Clerk,AuthenticateRequestOptions
 from config import settings
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException,Request , status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from typing import Dict
 from schemas import AuthUser
@@ -16,17 +16,15 @@ clerk = Clerk(bearer_auth=settings.CLERK_SECRET_KEY)
 
 
 def get_current_user(
+    request: Request,  
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> AuthUser:
-    token = credentials.credentials
-
     try:
         request_state = clerk.authenticate_request(
-            token=token,
+            request,
             options=AuthenticateRequestOptions(
-                jwt_key=settings.CLERK_PUBLIC_KEY,
-                #make it be loaded from environment
-                authorized_parties=settings.AUTHORIZED_PARTIES
+                secret_key=settings.CLERK_SECRET_KEY,
+                authorized_parties=settings.AUTHORIZED_PARTIES,
             ),
         )
 
