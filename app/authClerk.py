@@ -1,4 +1,4 @@
-# auth.py
+# authClerk.py
 import os
 from clerk_backend_api import Clerk,AuthenticateRequestOptions
 from config import settings
@@ -6,11 +6,21 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from typing import Dict
 from schemas import AuthUser
+from userMethods import UserMethods
+from database import AsyncSession,get_db
+from models import UserModel
 security = HTTPBearer()
 clerk = Clerk(bearer_auth=settings.CLERK_SECRET_KEY)
 
 
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> AuthUser:
+async def auth_user(
+    db: AsyncSession = Depends(get_db),
+    current_user: AuthUser = Depends(get_current_user),
+) -> UserModel:
+    return await UserMethods.get_or_create_user(db,current_user)
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+) -> AuthUser:
     token = credentials.credentials
 
     try:
@@ -18,8 +28,11 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
             token=token,
             options=AuthenticateRequestOptions(
                 jwt_key=settings.CLERK_PUBLIC_KEY,
-                authorized_parties=["http://localhost:3000", "https://your-app.com"]
-            )
+                authorized_parties=[
+                    "http://localhost:3000",
+                    "https://your-app.com",
+                ],
+            ),
         )
 
         if not request_state.is_authenticated:
@@ -29,25 +42,24 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
-        # Extract user ID (sub claim)
-        user_id = request_state.payload.get("sub")
-        if not user_id:
+        payload = getattr(request_state, "payload", {}) or {}
+        user_id = payload.get("sub")
+        email = payload.get("email")
+
+        if not user_id or not email:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token missing user ID claim",
+                detail="Token missing user ID or email claims",
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
-        # Extract email from custom JWT claim
-        email = request_state.payload.get("email")
-
-        return AuthUser(user_id=user_id,email=email)
+        return AuthUser(clerk_user_id=user_id, email=email)
 
     except HTTPException:
         raise
-    except Exception:
+    except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
+            detail=f"Invalid or expired token: {e}",
             headers={"WWW-Authenticate": "Bearer"},
         )

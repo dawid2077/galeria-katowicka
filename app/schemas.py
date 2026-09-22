@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from uuid_extension import uuid7
 
 class AuthUser(BaseModel):
-    user_id : str
+    clerk_user_id : str
     email : Emailstr
 class ChatMessage(BaseModel):
     role: Literal["user", "assistant", "system"]
