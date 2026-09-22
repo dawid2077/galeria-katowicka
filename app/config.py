@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     CLERK_SECRET_KEY: str = Field(...)
     DATABASE_URL: str = Field(...)
     OPENROUTER_API_KEY: str = Field(...)
+    AUTHORIZED_PARTIES: list[str] = Field(...)
 
     model_config = SettingsConfigDict(
         env_file="configs/.env",

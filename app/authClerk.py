@@ -9,6 +9,7 @@ from schemas import AuthUser
 from userMethods import UserMethods
 from database import AsyncSession,get_db
 from models import UserModel
+from config import settings
 security = HTTPBearer()
 clerk = Clerk(bearer_auth=settings.CLERK_SECRET_KEY)
 
@@ -24,10 +25,8 @@ def get_current_user(
             token=token,
             options=AuthenticateRequestOptions(
                 jwt_key=settings.CLERK_PUBLIC_KEY,
-                authorized_parties=[
-                    "http://localhost:3000",
-                    "https://your-app.com",
-                ],
+                #make it be loaded from environment
+                authorized_parties=settings.AUTHORIZED_PARTIES
             ),
         )
 
