@@ -13,11 +13,7 @@ security = HTTPBearer()
 clerk = Clerk(bearer_auth=settings.CLERK_SECRET_KEY)
 
 
-async def auth_user(
-    db: AsyncSession = Depends(get_db),
-    current_user: AuthUser = Depends(get_current_user),
-) -> UserModel:
-    return await UserMethods.get_or_create_user(db,current_user)
+
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> AuthUser:
@@ -63,3 +59,8 @@ def get_current_user(
             detail=f"Invalid or expired token: {e}",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    async def auth_user(
+        db: AsyncSession = Depends(get_db),
+        current_user: AuthUser = Depends(get_current_user),
+    ) -> UserModel:
+        return await UserMethods.get_or_create_user(db,current_user)

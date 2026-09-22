@@ -6,7 +6,6 @@ from sse_starlette.sse import EventSourceResponse
 from fastapi import APIRouter,FastAPI,HTTPException,status,Depends
 from ai import llm_call,full_response
 import uuid
-from typing import EmailStr
 
 
 
