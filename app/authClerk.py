@@ -4,11 +4,12 @@ from clerk_backend_api import Clerk,AuthenticateRequestOptions
 from config import settings
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-
+from typing import Dict
 security = HTTPBearer()
 clerk = Clerk(bearer_auth=settings.CLERK_SECRET_KEY)
 
-def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
+
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict[str, str]:
     token = credentials.credentials
 
     try:
@@ -16,7 +17,6 @@ def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(secu
             token=token,
             options=AuthenticateRequestOptions(
                 jwt_key=settings.CLERK_PUBLIC_KEY,
-                # Restricts tokens to ones sent by your frontend domain(s)
                 authorized_parties=["http://localhost:3000", "https://your-app.com"]
             )
         )
@@ -28,6 +28,7 @@ def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(secu
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
+        # Extract user ID (sub claim)
         user_id = request_state.payload.get("sub")
         if not user_id:
             raise HTTPException(
@@ -36,7 +37,13 @@ def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(secu
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
-        return user_id
+        # Extract email from custom JWT claim
+        email = request_state.payload.get("email")
+
+        return {
+            "user_id": user_id,
+            "email": email
+        }
 
     except HTTPException:
         raise
