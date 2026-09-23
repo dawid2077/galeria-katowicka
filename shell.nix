@@ -23,7 +23,6 @@ pkgs.mkShell {
     echo "Python: $(python --version)"
     echo "uv: $(uv --version)"
     echo ""
-    cd app
     echo "Run:"
     echo "  uv sync"
     echo "  uv run fastapi dev"

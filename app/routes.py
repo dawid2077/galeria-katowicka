@@ -2,7 +2,7 @@
 from database import AsyncSessionLocal,get_db,AsyncSession
 from schemas import ChatHistory,Message
 from sse_starlette.sse import EventSourceResponse
-from fastapi import APIRouter,FastAPI,HTTPException,status,Depends
+from fastapi import APIRouter,FastAPI,HTTPException,status,Depends,Response
 from ai import llm_call,full_response
 import uuid
 from authClerk import auth_user
@@ -52,4 +52,15 @@ async def show_user_id_email(
         "clerk_id": user.clerk_id,
     }
 
-        
+@router.get("/health/live",status_code=status.HTTP_200_OK)
+async def healthy(response: Response)-> dict:
+    #this is here so services know to not cache this response
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return {"status": "up"}
+
+async def check_db():
+
+@router.get("/health/ready",status_code=status.HTTP_200_OK)
+async def ready(response: Response)-> dic:
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    result= await asyncion.gather(check_db())
