@@ -1,6 +1,6 @@
 from models import UserModel,SessionModel
 from database import AsyncSession
-from schemas import AuthUser
+from schemas import AuthUser,SessionQuery
 from uuid6 import uuid7
 class UserMethods:
     #! first two  function will not be used 
