@@ -31,6 +31,7 @@ class SessionModel(Base):
     session_user_id: Mapped[uuid.UUID] = mapped_column(
         Uuid, ForeignKey("users.user_id"), index=True
     )
+    title: Mapped[str]=mapped_column(String)
     chat_history: Mapped[list[dict[str, Any]]] = mapped_column(
         JSON,
         default=list

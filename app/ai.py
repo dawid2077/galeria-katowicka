@@ -1,21 +1,28 @@
 #ai.py
-from schemas import ChatHistory
+from schemas import ChatHistory,SessionQuery
 from config import settings
 from openai import AsyncOpenAI
 import structlog
 from typing import cast
 from openai.types.chat import ChatCompletionMessageParam
 logger = structlog.get_logger()
-#dont hardcode openrouter in future
 client = AsyncOpenAI(
-    base_url="settings.LLM_URL",
+    base_url=settings.LLM_URL,
     api_key=settings.OPENROUTER_API_KEY
 )
-async def llm_call(chat_data: ChatHistory):
+async def llm_call(session: SessionQuery):
+
+    
+    #TODO dont hardcode openrouter in future
+
+    full_response_chunks: list[str] = []
+
+
+
     try:
         messages = cast(
             list[ChatCompletionMessageParam],
-            [m.model_dump() for m in chat_data.conversation],
+            [m.model_dump(exclude_none=True) for m in session.chat_history.conversation],
         )
 
         stream = await client.chat.completions.create(
@@ -32,14 +39,24 @@ async def llm_call(chat_data: ChatHistory):
             content = getattr(delta, "content", None)
 
             if content:
+                full_response_chunks.append(content)
                 yield {"event": "streamingResponse", "data": content}
+
+        full_text = "".join(full_response_chunks)
+
+        #okay so for it i need session id to query also user_id a
+        # here is a mock example will do it in a moment await save_to_db(chat_data.conversation_id, full_text)
+    except asyncio.CancelledError:
+        logger.info("Client disconnected mid-stream", session_id=str(session.session_id))
+        raise  
 
     except Exception as e:
         logger.error("LLM stream call failed", error=str(e))
-        yield {"event": "error", "data": str(e)}
+        yield {"event": "error", "data": "error"}
         return
 
     yield {"event": "done", "data": ""}
+#this is for dev dont use it in prod
 async def full_response(chat_data: ChatHistory):
     """Accumulates the entire streamed response and yields it once, at the end."""
     full_text = ""
@@ -55,5 +72,8 @@ async def full_response(chat_data: ChatHistory):
                 return  # stop here, don't send a "done" with partial text
 
         yield {"event": "done", "data": full_text}
+    except asyncio.CancelledError:
+        logger.info("Client disconnected mid-stream", session_id=str(session.session_id))
+        raise  
     except Exception as e:
         yield {"event": "error", "data": str(e)}

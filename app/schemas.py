@@ -38,14 +38,16 @@ class UserResponse(BaseModel):
     # so pydantic can work with sqlalchemy object rather than only a python dict
     model_config = ConfigDict(from_attributes=True)
 
-
-class SessionCreate(BaseModel):
-    session_id: uuid.UUID = Field(default_factory=uuid7)
+#it creates and returns or only returns 
+class SessionQuery(BaseModel):
+    session_id: uuid.UUID 
+    session_user_id: uuid.UUID
     chat_history: ChatHistory
 
 
 class SessionResponse(BaseModel):
     session_id: uuid.UUID
+    session_user_id: uuid.UUID
     chat_history: ChatHistory
     created_at: datetime
 

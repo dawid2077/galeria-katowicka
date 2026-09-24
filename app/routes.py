@@ -1,6 +1,6 @@
 #routes.py
 from database import AsyncSessionLocal,get_db,AsyncSession
-from schemas import ChatHistory,Message
+from schemas import ChatHistory,Message,SessionQuery,ChatMessage
 from sse_starlette.sse import EventSourceResponse
 from fastapi import APIRouter,FastAPI,HTTPException,status,Depends,Response
 from ai import llm_call,full_response
@@ -9,17 +9,37 @@ from authClerk import auth_user
 from userMethods import UserModel
 
 
+
 router = APIRouter()
 
-@router.post("/chat/stream",
-summary="Stream Ai Response",
-description="--")
+@router.post("/chat",
+summary="Starts a new chat session",
+description="Stream Ai Response")
 #* this exist so the response in small chunks which makes it look faster and more responsive
+#change chat_data to message
+async def create_chat(message: Message,user: UserModel = Depends(auth_user)) -> EventSourceResponse:    
+    #in future here will be kicked off an auto summary model and then it updates the db with the title
+    return EventSourceResponse(llm_call(SessionQuery(session_id=uuid7()
+    ,session_user_id=user.user_id,
+    chat_history=ChatHistory(conversation=[ChatMessage(role="user",content=message.message)]))))
+
+@router.post("/chat/{session_id}",
+summary="Continue existing session",
+description="Stream Ai Response")
+#! here also i should fetch the chat_data
+#* this exist so the response in small chunks which makes it look faster and more responsive
+#chabge chat_data to message
+async def continue_chat(session_id: uuid.UUID,message: Message,user: UserModel = Depends(auth_user)) -> EventSourceResponse:
+    return EventSourceResponse(llm_call(SessionQuery(session_id=session_id,session_user_id=user.user_id,chat_history=chat_data)))
+
+
+
+@router.post("/test/chat/",
+summary="test Stream Ai Response",
+description="--")
 async def stream_chat(chat_data: ChatHistory) -> EventSourceResponse:
     #! in prod change debug_print_response to llm_call
     return EventSourceResponse(full_response(chat_data))
-
-
 #!add email excation from auth will work on that 
 """
 @router.get("/test/endpoint")

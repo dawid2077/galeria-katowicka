@@ -55,3 +55,5 @@ class UserMethods:
             )
             result = await db.execute(stmt)
             return result.scalar_one()
+    async def fetch
+    async def patch_session_history

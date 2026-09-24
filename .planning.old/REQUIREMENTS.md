@@ -82,7 +82,7 @@
 |-------------|-------|------|--------------|
 | AUTH-01 | 1 | TBD | Manual: Sign in with Google on landing |
 | CHAT-01 | 2 | TBD | Automated: SSE stream returns tokens |
-| UI-01 | 3 | TBD | Manual: Theme toggle persists |
+| UI-01 | 1 | TBD | Manual: Theme toggle persists |
 
 ---
 
