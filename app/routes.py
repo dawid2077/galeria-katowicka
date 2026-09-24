@@ -5,6 +5,7 @@ from sse_starlette.sse import EventSourceResponse
 from fastapi import APIRouter,FastAPI,HTTPException,status,Depends,Response
 from ai import llm_call,full_response
 import uuid
+from uuid6 import uuid7
 from authClerk import auth_user
 from methods import UserModel,SessionModel
 from dependencies import get_valid_user_session
@@ -17,20 +18,20 @@ summary="Starts a new chat session",
 description="Stream Ai Response")
 #* this exist so the response in small chunks which makes it look faster and more responsive
 #change chat_data to message
-async def create_chat(message: Message,user: UserModel = Depends(auth_user)) -> EventSourceResponse:    
+async def create_chat(message: Message,db: AsyncSession=Depends(get_db),user: UserModel = Depends(auth_user)) -> EventSourceResponse:    
     #in future here will be kicked off an auto summary model and then it updates the db with the title
     query=SessionQuery(
         session_id=uuid7(),
         session_user_id=user.user_id,
         chat_history=ChatHistory(conversation=[ChatMessage(role="user",content=message.message)])
     )
-    return EventSourceResponse(llm_call(query))
+    return EventSourceResponse(llm_call(query,db))
 
 @router.post("/chat/{session_id}",
 summary="Continue existing session",
 description="Stream Ai Response")
 #* this exist so the response in small chunks which makes it look faster and more responsive
-async def continue_chat(message: Message,session: SessionModel = Depends(get_valid_user_session),user: UserModel = Depends(auth_user)) -> EventSourceResponse:
+async def continue_chat(message: Message,db: AsyncSession=Depends(get_db),session: SessionModel = Depends(get_valid_user_session),user: UserModel = Depends(auth_user)) -> EventSourceResponse:
     existing_messages = session.chat_history
     new_msg = ChatMessage(role="user", content=message.message)
     
@@ -40,7 +41,7 @@ async def continue_chat(message: Message,session: SessionModel = Depends(get_val
         chat_history=ChatHistory(conversation=existing_messages + [new_msg])
     )
 
-    return EventSourceResponse(llm_call(query))
+    return EventSourceResponse(llm_call(query,db))
 
 
 

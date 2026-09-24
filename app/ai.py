@@ -6,13 +6,15 @@ import structlog
 from typing import cast
 from openai.types.chat import ChatCompletionMessageParam
 from methods import SessionMethods
+import asyncio
+from database import AsyncSession  
 logger = structlog.get_logger()
 #TODO dont hardcode openrouter in future
 client = AsyncOpenAI(
     base_url=settings.LLM_URL,
     api_key=settings.OPENROUTER_API_KEY
 )
-async def llm_call(session: SessionQuery):
+async def llm_call(session: SessionQuery,db: AsyncSession):
 
     full_response_chunks: list[str] = []
 
@@ -23,7 +25,7 @@ async def llm_call(session: SessionQuery):
         )
 
         stream = await client.chat.completions.create(
-            model=settings.MODEL,
+            model=settings.LLM_MODEL,
             messages=messages,
             stream=True,
         )
@@ -63,8 +65,9 @@ async def llm_call(session: SessionQuery):
 #this is for dev dont use it in prod
 
 #! here its outdated
+
 async def full_response(chat_data: ChatHistory):
-    """Accumulates the entire streamed response and yields it once, at the end."""
+    #Accumulates the entire streamed response and yields it once, at the end.
     full_text = ""
     try:
         async for chunk in llm_call(chat_data):

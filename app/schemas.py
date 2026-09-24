@@ -24,7 +24,12 @@ class ChatHistory(BaseModel):
     conversation: List[ChatMessage]
     
 class Message(BaseModel):
-    message: str
+    message: str=Field(
+        description="The prompt that will be sent to the AI",
+        examples=[
+            "Powiedz mi o Muzeum Śląskim i Strefie Kultury - gdzie się znajduje, co tam znajdę?",
+        ]
+    )
 
 
 

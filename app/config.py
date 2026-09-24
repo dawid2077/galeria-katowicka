@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     AUTHORIZED_PARTIES: list[str] = Field(...)
     #in future i can add if its possible to check if these are actual urls in whole settings
     LLM_URL: str = Field(...)
+    LLM_MODEL: str = Field(...)
 
     model_config = SettingsConfigDict(
         env_file="configs/.env",

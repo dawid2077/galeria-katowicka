@@ -2,6 +2,10 @@ from models import UserModel,SessionModel
 from database import AsyncSession
 from schemas import AuthUser,SessionQuery
 from uuid6 import uuid7
+from sqlalchemy.exc import IntegrityError
+import logging
+from sqlalchemy import select
+from sqlalchemy.orm.attributes import flag_modified
 class UserMethods:
     #! first two  function will not be used 
     @staticmethod
