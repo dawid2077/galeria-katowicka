@@ -7,7 +7,7 @@ from ai import llm_call,full_response
 import uuid
 from authClerk import auth_user
 from userMethods import UserModel
-
+from dependencies import get_valid_user_session
 
 
 router = APIRouter()
@@ -19,18 +19,28 @@ description="Stream Ai Response")
 #change chat_data to message
 async def create_chat(message: Message,user: UserModel = Depends(auth_user)) -> EventSourceResponse:    
     #in future here will be kicked off an auto summary model and then it updates the db with the title
-    return EventSourceResponse(llm_call(SessionQuery(session_id=uuid7()
-    ,session_user_id=user.user_id,
-    chat_history=ChatHistory(conversation=[ChatMessage(role="user",content=message.message)]))))
+    query=SessionQuery(
+        session_id=uuid7(),
+        session_user_id=user.user_id,
+        chat_history=ChatHistory(conversation=[ChatMessage(role="user",content=message.message)])
+    )
+    return EventSourceResponse(llm_call(query))
 
 @router.post("/chat/{session_id}",
 summary="Continue existing session",
 description="Stream Ai Response")
-#! here also i should fetch the chat_data
 #* this exist so the response in small chunks which makes it look faster and more responsive
-#chabge chat_data to message
-async def continue_chat(session_id: uuid.UUID,message: Message,user: UserModel = Depends(auth_user)) -> EventSourceResponse:
-    return EventSourceResponse(llm_call(SessionQuery(session_id=session_id,session_user_id=user.user_id,chat_history=chat_data)))
+async def continue_chat(message: Message,session: SessionModel = Depends(get_valid_user_session),user: UserModel = Depends(auth_user)) -> EventSourceResponse:
+    existing_messages = session.chat_history
+    new_msg = ChatMessage(role="user", content=message.message)
+    
+    query = SessionQuery(
+        session_id=session.id,
+        session_user_id=session.user_id,
+        chat_history=ChatHistory(conversation=existing_messages + [new_msg])
+    )
+
+    return EventSourceResponse(llm_call(query))
 
 
 

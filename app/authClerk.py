@@ -6,7 +6,7 @@ from fastapi import Depends, HTTPException,Request , status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from typing import Dict
 from schemas import AuthUser
-from userMethods import UserMethods
+from methods import UserMethods
 from database import AsyncSession,get_db
 from models import UserModel
 from config import settings

@@ -24,7 +24,8 @@ class ChatHistory(BaseModel):
     conversation: List[ChatMessage]
     
 class Message(BaseModel):
-    detail: str
+    message: str
+
 
 
 
