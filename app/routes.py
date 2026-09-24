@@ -57,10 +57,13 @@ async def healthy(response: Response)-> dict:
     #this is here so services know to not cache this response
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return {"status": "up"}
-
-async def check_db():
-
+     
+"""
+async def check_db(
+    db: AsyncSession=) ->:
+    
 @router.get("/health/ready",status_code=status.HTTP_200_OK)
 async def ready(response: Response)-> dic:
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     result= await asyncion.gather(check_db())
+"""
