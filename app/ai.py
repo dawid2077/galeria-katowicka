@@ -6,8 +6,9 @@ import structlog
 from typing import cast
 from openai.types.chat import ChatCompletionMessageParam
 logger = structlog.get_logger()
+#dont hardcode openrouter in future
 client = AsyncOpenAI(
-    base_url="https://openrouter.ai/api/v1",
+    base_url="settings.LLM_URL",
     api_key=settings.OPENROUTER_API_KEY
 )
 async def llm_call(chat_data: ChatHistory):
