@@ -6,7 +6,7 @@ from fastapi import APIRouter,FastAPI,HTTPException,status,Depends,Response
 from ai import llm_call,full_response
 import uuid
 from authClerk import auth_user
-from userMethods import UserModel
+from methods import UserModel,SessionModel
 from dependencies import get_valid_user_session
 
 
