@@ -1,3 +1,7 @@
+---
+last_mapped_commit: 2ab2e51140e076aa6f8585eb8cdf2b07d40351cb
+last_mapped_at: 2026-09-24
+---
 # TESTING.md
 
 **Project:** galeria-katowicka  
@@ -25,6 +29,7 @@ A full-text search for `pytest`, `TestClient`, `httpx` (as test client), `unitte
 None are declared. `pyproject.toml` (at `pyproject.toml:1-24`) lists only runtime dependencies — no `[project.optional-dependencies.dev]` or `[project.optional-dependencies.test]` group.
 
 `uv.lock` confirms the absence:
+
 - **No** `pytest` package entry.
 - **No** `pytest-asyncio` package entry.
 - **No** `pytest-mock` or `pytest-fastapi` package entry.
@@ -96,6 +101,7 @@ galeria-katowicka/
 ### Rationale for Location
 
 Tests live at the **repo root** (alongside `app/`), not inside `app/`. This:
+
 - Avoids interfering with `app/` as a (potential) importable package.
 - Keeps test code separate from production code.
 - Aligns with FastAPI and Python community conventions.
@@ -114,6 +120,7 @@ Tests live at the **repo root** (alongside `app/`), not inside `app/`. This:
 | `GET /test/endpoint` | Returns user payload dict; requires auth |
 
 **Strategy:**
+
 - Use FastAPI `TestClient` (via `httpx`) with a test database override.
 - Override `get_db` dependency (from `app/database.py:26`) to use an in-memory SQLite or a test-scoped session.
 - Mock `llm_call` / `full_response` from `app/ai.py` for deterministic tests.
@@ -121,7 +128,9 @@ Tests live at the **repo root** (alongside `app/`), not inside `app/`. This:
 **Example pattern:**
 
 ```python
+
 # tests/test_routes.py
+
 from fastapi.testclient import TestClient
 from app.main import app
 from tests.conftest import override_get_db  # fixture
@@ -165,6 +174,7 @@ def test_stream_chat_returns_sse(override_get_db):
 **Strategy:** Mock `AsyncOpenAI` client from `openai` package. Use `AsyncMock` for the streaming iterator.
 
 **Key difference between active and legacy:**
+
 - Active `app/ai.py` (line 36-38): catches exception inside `llm_call()`, yields error event, and returns — meaning the `finally`-style `done` is NOT sent after error.
 - Legacy `app.old2/ai.py` (line 24-25): uses `finally` block that always yields `done` even after errors — different behavior; do not port legacy pattern to active code.
 
@@ -256,7 +266,9 @@ The primary strategy is **dependency injection override**, not mocking:
 ### Fixture Pattern
 
 ```python
+
 # tests/conftest.py
+
 import pytest
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from app.database import AsyncSessionLocal
@@ -319,6 +331,7 @@ exclude_lines = ["pragma: no cover", "if __name__ == .__main__.", "raise NotImpl
 ### Current State
 
 **No CI pipeline exists.** The repository has:
+
 - No GitHub Actions (no `.github/workflows/` directory).
 - No GitLab CI (no `.gitlab-ci.yml`).
 - No other CI configuration.
@@ -328,19 +341,25 @@ exclude_lines = ["pragma: no cover", "if __name__ == .__main__.", "raise NotImpl
 ### Recommended CI Commands
 
 ```bash
+
 # Install dependencies
+
 uv sync --group test
 
 # Run tests
+
 uv run pytest tests/ -v --tb=short
 
 # Run with coverage
+
 uv run pytest tests/ --cov=app --cov-report=term-missing --cov-report=html
 
 # Type check (recommended, not currently enforced)
+
 uv run pyright app/ || uv run mypy app/
 
 # Lint (recommended, not currently enforced)
+
 uv run ruff check app/
 uv run ruff format --check app/
 ```
@@ -348,7 +367,9 @@ uv run ruff format --check app/
 ### Suggested CI Pipeline (GitHub Actions)
 
 ```yaml
+
 # .github/workflows/ci.yml
+
 name: CI
 on: [push, pull_request]
 jobs:
@@ -361,6 +382,7 @@ jobs:
       - run: uv sync --group test
       - run: uv run pytest tests/ -v
       - run: uv run pytest tests/ --cov=app --cov-report=xml
+
 ```
 
 ---
@@ -370,25 +392,33 @@ jobs:
 Once tests are added, the primary commands will be:
 
 ```bash
+
 # Run all tests
+
 uv run pytest
 
 # Run tests verbosely
+
 uv run pytest -v --tb=long
 
 # Run specific test file
+
 uv run pytest tests/test_routes.py -v
 
 # Run specific test function
+
 uv run pytest tests/test_auth.py::test_valid_token_returns_user -v
 
 # Run with coverage report
+
 uv run pytest --cov=app --cov-report=term-missing
 
 # Run with HTML coverage report
+
 uv run pytest --cov=app --cov-report=html
 
 # Watch mode (requires pytest-watch or similar)
+
 uv run ptw -- -v
 ```
 
